@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title>ColorPicker</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="../build/build.css" type="text/css">
+    <style>
+      body {
+        font: 14px Helvetica, Arial;
+        padding: 80px;
+      }
+      .color-picker {
+        margin-top: 10px;
+      }
+      body > span {
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ColorPicker</h1>
+    <span class="rgb"></span>
+    <script src="../build/build.js"></script>
+    <script>
+      var ColorPicker = require('color-picker')
+        , o = require('component-jquery');
+
+      function update(color) {
+        o('.rgb').text(color.toString()).css('background', color)
+      }
+
+      var picker = new ColorPicker;
+      picker.el.appendTo('body');
+      picker.on('change', update);
+
+      var picker = new ColorPicker;
+      picker.size(100);
+      picker.el.appendTo('body');
+      picker.on('change', update);
+
+      var picker = new ColorPicker;
+      picker.width(50);
+      picker.height(100);
+      picker.el.appendTo('body');
+      picker.on('change', update);
+
+      var picker = new ColorPicker;
+      picker.size(50);
+      picker.el.appendTo('body');
+      picker.on('change', update);
+    </script>
+  </body>
+</html>

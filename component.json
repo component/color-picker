@@ -1,0 +1,13 @@
+{
+  "name": "color-picker",
+  "repo": "component/color-picker",
+  "description": "Simple color picker component",
+  "version": "0.0.1",
+  "keywords": ["color", "picker", "ui"],
+  "development": {
+    "component/jquery": "*",
+    "component/emitter": "*"
+  },
+  "scripts": ["index.js", "template.js"],
+  "styles": ["color-picker.css"]
+}

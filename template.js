@@ -1,0 +1,1 @@
+module.exports = '<div class="color-picker">\n  <canvas class="main"></canvas>\n  <canvas class="spectrum"></canvas>\n</div>';
