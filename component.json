@@ -4,7 +4,7 @@
   "description": "Simple color picker component",
   "version": "0.0.1",
   "keywords": ["color", "picker", "ui"],
-  "development": {
+  "dependencies": {
     "component/jquery": "*",
     "component/emitter": "*"
   },
