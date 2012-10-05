@@ -4,7 +4,8 @@
  */
 
 var o = require('jquery')
-  , Emitter = require('emitter');
+  , Emitter = require('emitter')
+  , autoscale = require('autoscale-canvas');
 
 /**
  * Expose `ColorPicker`.
@@ -283,6 +284,7 @@ ColorPicker.prototype.renderSpectrum = function(options){
 
   canvas.width = w;
   canvas.height = h;
+  autoscale(canvas);
 
   var grad = ctx.createLinearGradient(0, 0, 0, h);
   grad.addColorStop(0, rgb(255, 0, 0));
@@ -321,6 +323,7 @@ ColorPicker.prototype.renderMain = function(options){
 
   canvas.width = w;
   canvas.height = h;
+  autoscale(canvas);
 
   var grad = ctx.createLinearGradient(0, 0, w, 0);
   grad.addColorStop(0, rgb(255, 255, 255));

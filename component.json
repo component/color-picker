@@ -6,6 +6,7 @@
   "keywords": ["color", "picker", "ui"],
   "dependencies": {
     "component/jquery": "*",
+    "component/autoscale-canvas": "*",
     "component/emitter": "*"
   },
   "scripts": ["index.js", "template.js"],
