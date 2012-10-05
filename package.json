@@ -2,7 +2,7 @@
   "name": "color-picker",
   "repo": "component/color-picker",
   "description": "Simple color picker component",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "keywords": ["color", "picker", "ui"],
   "dependencies": {
     "jquery-component": "*",
