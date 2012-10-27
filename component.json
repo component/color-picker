@@ -3,12 +3,22 @@
   "repo": "component/color-picker",
   "description": "Simple color picker component",
   "version": "0.0.2",
-  "keywords": ["color", "picker", "ui"],
+  "keywords": [
+    "color",
+    "picker",
+    "ui"
+  ],
   "dependencies": {
     "component/jquery": "*",
     "component/autoscale-canvas": "*",
     "component/emitter": "*"
   },
-  "scripts": ["index.js", "template.js"],
-  "styles": ["color-picker.css"]
+  "scripts": [
+    "index.js",
+    "template.js"
+  ],
+  "styles": [
+    "color-picker.css"
+  ],
+  "license": "MIT"
 }
