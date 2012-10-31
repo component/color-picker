@@ -248,6 +248,123 @@ ColorPicker.prototype.colorAt = function(x, y){
 };
 
 /**
+ * Get the RGB color from hue, saturation, and brightness `(h, s, v)`.
+ * Adapted from http://www.easyrgb.com/math.html
+ *
+ * @param {Number} h
+ * @param {Number} s
+ * @param {Number} v
+ * @return {Object}
+ * @api private
+ */
+
+ColorPicker.prototype.hsv2rgb = function (h, s, v) {
+  var r, g, b;
+  if ( s == 0 ) {
+    r = v * 255;
+    g = v * 255;
+    b = v * 255;
+  } else {
+
+    // h must be < 1
+    var var_h = h * 6;
+    if ( var_h == 6 ) {
+      var_h = 0;
+    }
+
+    var var_i = Math.floor(var_h);
+    var var_1 = v * ( 1 - s );
+    var var_2 = v * ( 1 - s * ( var_h - var_i ) );
+    var var_3 = v * ( 1 - s * ( 1 - ( var_h - var_i ) ) );
+
+    if ( var_i == 0 ) {
+      var_r = v;
+      var_g = var_3;
+      var_b = var_1;
+    } else if ( var_i == 1 ) {
+      var_r = var_2;
+      var_g = v;
+      var_b = var_1;
+    } else if ( var_i == 2 ) {
+      var_r = var_1;
+      var_g = v;
+      var_b = var_3
+    } else if ( var_i == 3 ) {
+      var_r = var_1;
+      var_g = var_2;
+      var_b = v;
+    } else if ( var_i == 4 ) {
+      var_r = var_3;
+      var_g = var_1;
+      var_b = v;
+    } else {
+      var_r = v;
+      var_g = var_1;
+      var_b = var_2
+    }
+
+    r = var_r * 255;
+    g = var_g * 255;
+    b = var_b * 255;
+  }
+
+  return {
+    r: r,
+    g: g,
+    b: b,
+    toString: function(){
+      return rgb(this.r, this.g, this.b);
+    }
+  };
+};
+
+/**
+ * Get the hue, saturation, and brightness from RGB `(r, g, b)`.
+ *
+ * @param {Number} r
+ * @param {Number} g
+ * @param {Number} b
+ * @return {Object}
+ * @api private
+ */
+
+ColorPicker.prototype.rgb2hsv = function (r, g, b) {
+  r = r / 255;
+  g = g / 255;
+  b = b / 255;
+
+  var min = Math.min( r, g, b );    //Min. value of RGB
+  var max = Math.max( r, g, b );    //Max. value of RGB
+  var deltaMax = max - min;             //Delta RGB value
+  var v = max;
+  var s, h;
+  var deltaRed, deltaGreen, deltaBlue;
+
+  if ( deltaMax == 0 ) {
+    h = 0;                               //HSV results = 0 ÷ 1
+    s = 0;
+  } else {
+    s = deltaMax / max;
+    deltaRed = ( ( ( max - r ) / 6 ) + ( deltaMax / 2 ) ) / deltaMax;
+    deltaGreen = ( ( ( max - g ) / 6 ) + ( deltaMax / 2 ) ) / deltaMax;
+    deltaBlue = ( ( ( max - b ) / 6 ) + ( deltaMax / 2 ) ) / deltaMax;
+
+    if      ( r == max ) h = deltaBlue - deltaGreen;
+    else if ( g == max ) h = ( 1 / 3 ) + deltaRed - deltaBlue;
+    else if ( b == max ) h = ( 2 / 3 ) + deltaGreen - deltaRed;
+
+    if ( h < 0 ) h += 1;
+    if ( h > 1 ) h -= 1;
+  }
+
+  return {
+    h: h,
+    s: s,
+    v: v
+  };
+};
+
+/**
  * Get the RGB value at `y`.
  *
  * @param {Type} name
@@ -276,10 +393,20 @@ ColorPicker.prototype.hueAt = function(y){
  */
 
 ColorPicker.prototype.color = function(color){
-  // TODO: update pos
-  // TODO: should update .hue() automatically...
+  // TODO: should detect/support rgba() too
   if (0 == arguments.length) return this._color;
   this._color = color;
+  if (typeof color === 'string' && color.indexOf('rgb(') === 0) {
+    this._hue = color;
+    var _rgb = color.slice(4, -1).split(',');
+    var hsv = this.rgb2hsv(_rgb[0]*1, _rgb[1]*1, _rgb[2]*1);
+    this._huePos = (1 - hsv.h) * this.h;
+    this._colorPos = {
+      x: Math.round(hsv.s * this.w),
+      y: Math.round((1 - hsv.v) * this.w)
+    };
+    this.render();
+  }
   return this;
 };
 
