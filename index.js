@@ -3,7 +3,10 @@
  * Module dependencies.
  */
 
-var o = require('jquery')
+var query = require('query')
+  , domify = require('domify')
+  , event = require('event')
+  , off = require('offset')
   , Emitter = require('emitter')
   , autoscale = require('autoscale-canvas');
 
@@ -34,7 +37,7 @@ function rgba(r,g,b,a) {
  */
 
 function localPos(e) {
-  var offset = o(e.target).offset();
+  var offset = off(e.target);
   return {
     x: e.pageX - offset.left,
     y: e.pageY - offset.top
@@ -53,9 +56,10 @@ function localPos(e) {
 
 function ColorPicker() {
   this._colorPos = {};
-  this.el = o(require('./template'));
-  this.main = this.el.find('.main').get(0);
-  this.spectrum = this.el.find('.spectrum').get(0);
+  this.el = domify(require('./template'));
+  // this.main = this.el.find('.main').get(0);
+  this.main = query('.main', this.el);
+  this.spectrum = query('.spectrum', this.el);
   this.hue(rgb(255, 0, 0));
   this.spectrumEvents();
   this.mainEvents();
@@ -120,7 +124,7 @@ ColorPicker.prototype.height = function(n){
 
 ColorPicker.prototype.spectrumEvents = function(){
   var self = this
-    , canvas = o(this.spectrum)
+    , canvas = this.spectrum
     , down;
 
   function update(e) {
@@ -132,17 +136,17 @@ ColorPicker.prototype.spectrumEvents = function(){
     self.render();
   }
 
-  canvas.mousedown(function(e){
+  event.bind(canvas, 'mousedown', function(e) {
     e.preventDefault();
     down = true;
     update(e);
   });
 
-  canvas.mousemove(function(e){
+  event.bind(canvas, 'mousemove', function(e){
     if (down) update(e);
   });
 
-  canvas.mouseup(function(){
+  event.bind(canvas, 'mouseup', function() {
     down = false;
   });
 };
@@ -155,7 +159,7 @@ ColorPicker.prototype.spectrumEvents = function(){
 
 ColorPicker.prototype.mainEvents = function(){
   var self = this
-    , canvas = o(this.main)
+    , canvas = this.main
     , down;
 
   function update(e) {
@@ -168,17 +172,17 @@ ColorPicker.prototype.mainEvents = function(){
     self.render();
   }
 
-  canvas.mousedown(function(e){
+  event.bind(canvas, 'mousedown', function(e) {
     e.preventDefault();
     down = true;
     update(e);
   });
 
-  canvas.mousemove(function(e){
+  event.bind(canvas, 'mousemove', function(e){
     if (down) update(e);
   });
 
-  canvas.mouseup(function(){
+  event.bind(canvas, 'mouseup', function() {
     down = false;
   });
 };
@@ -357,4 +361,16 @@ ColorPicker.prototype.renderMain = function(options){
 
   ctx.beginPath();
   ctx.restore();
+};
+
+/**
+ * Append color picker to element
+ *
+ * @param {DomElement} el
+ * @returns {ColorPicker} this
+ * @api public
+ */
+ColorPicker.prototype.appendTo = function(el) {
+  el.appendChild(this.el);
+  return this;
 };

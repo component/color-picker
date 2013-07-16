@@ -9,9 +9,12 @@
     "ui"
   ],
   "dependencies": {
-    "component/jquery": "*",
     "component/autoscale-canvas": "*",
-    "component/emitter": "*"
+    "component/emitter": "*",
+    "component/query": "*",
+    "component/domify": "*",
+    "component/event": "*",
+    "anthonyshort/offset": "*"
   },
   "scripts": [
     "index.js",
@@ -20,5 +23,8 @@
   "styles": [
     "color-picker.css"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "development": {
+    "component/jquery": "*"
+  }
 }

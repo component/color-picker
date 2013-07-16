@@ -17,7 +17,7 @@
 var ColorPicker = require('color-picker');
 
 var picker = new ColorPicker;
-picker.el.appendTo('body');
+picker.appendTo(document.body);
 picker.on('change', function(color){
   $('.rgb').text(color.toString()).css('background', color);
 });
@@ -50,6 +50,10 @@ picker.on('change', function(color){
 ### ColorPicker#color(str)
 
   Set the color value to `str`.
+
+### ColorPicker#appendTo(el)
+
+  Append color picker to given DOM element
 
 ## License
 
