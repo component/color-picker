@@ -3,7 +3,11 @@
   "repo": "component/color-picker",
   "description": "Simple color picker component",
   "version": "0.0.2",
-  "keywords": ["color", "picker", "ui"],
+  "keywords": [
+    "color",
+    "picker",
+    "ui"
+  ],
   "dependencies": {
     "jquery-component": "*",
     "emitter-component": "*",
@@ -14,6 +18,12 @@
       "color-picker/index.js": "index.js",
       "color-picker/template.js": "template.js"
     },
-    "styles": ["color-picker.css"]
+    "styles": [
+      "color-picker.css"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/component/color-picker.git"
   }
 }
