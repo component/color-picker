@@ -35,9 +35,11 @@ function rgba(r,g,b,a) {
 
 function localPos(e) {
   var offset = o(e.target).offset();
+  var x = typeof( e.offsetX ) != 'undefined' ? e.offsetX : ( e.pageX - offset.left );
+  var y = typeof( e.offsetY ) != 'undefined' ? e.offsetY : ( e.pageY - offset.top );
   return {
-    x: e.pageX - offset.left,
-    y: e.pageY - offset.top
+    x: x,
+    y: y
   };
 }
 
@@ -61,6 +63,24 @@ function ColorPicker() {
   this.mainEvents();
   this.w = 180;
   this.h = 180;
+
+  var gradientBuffer = document.createElement('canvas');
+  gradientBuffer.width = this.w;
+  gradientBuffer.height = this.h;
+  var ctx = gradientBuffer.getContext('2d');
+  var gradient = this.spectrumGradient = ctx.createLinearGradient(0, 0, 0, this.h);
+  gradient.addColorStop(0, rgb(255, 0, 0));
+  gradient.addColorStop(.15, rgb(255, 0, 255));
+  gradient.addColorStop(.33, rgb(0, 0, 255));
+  gradient.addColorStop(.49, rgb(0, 255, 255));
+  gradient.addColorStop(.67, rgb(0, 255, 0));
+  gradient.addColorStop(.84, rgb(255, 255, 0));
+  gradient.addColorStop(1, rgb(255, 0, 0));
+
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, this.w, this.h);
+  this.gradientBuffer = gradientBuffer;
+  
   this.render();
 }
 
@@ -121,11 +141,12 @@ ColorPicker.prototype.height = function(n){
 ColorPicker.prototype.spectrumEvents = function(){
   var self = this
     , canvas = o(this.spectrum)
-    , down;
+    , down
+    , target; // denotes we are the current target, without this, when mouse moves/enters/leaves it can start interacting with the other element
 
   function update(e) {
     var offsetY = localPos(e).y;
-    var color = self.hueAt(offsetY - 4);
+    var color = self.hueAt(offsetY);
     self.hue(color.toString());
     self.emit('change', color);
     self._huePos = offsetY;
@@ -135,16 +156,27 @@ ColorPicker.prototype.spectrumEvents = function(){
   canvas.mousedown(function(e){
     e.preventDefault();
     down = true;
+    target = true;
     update(e);
   });
 
   canvas.mousemove(function(e){
-    if (down) update(e);
+    if (target && down) update(e);
   });
 
   canvas.mouseup(function(){
     down = false;
+    target = false;
   });
+
+  canvas.mouseenter(function(e){
+    down = !!e.which; // e.which is 1 if the mouse button is down when entering
+    if ( !down )
+    {
+        target = false;
+    }
+  });
+
 };
 
 /**
@@ -156,7 +188,8 @@ ColorPicker.prototype.spectrumEvents = function(){
 ColorPicker.prototype.mainEvents = function(){
   var self = this
     , canvas = o(this.main)
-    , down;
+    , down
+    , target; // denotes we are the current target, without this, when mouse moves/enters/leaves it can start interacting with the other element
 
   function update(e) {
     var color;
@@ -171,15 +204,25 @@ ColorPicker.prototype.mainEvents = function(){
   canvas.mousedown(function(e){
     e.preventDefault();
     down = true;
+    target = true;
     update(e);
   });
 
   canvas.mousemove(function(e){
-    if (down) update(e);
+    if (target && down) update(e);
   });
 
   canvas.mouseup(function(){
     down = false;
+    target = false;
+  });
+
+  canvas.mouseenter(function(e){
+    down = !!e.which; // e.which is 1 if the mouse button is down when entering
+    if ( !down )
+    {
+        target = false;
+    }
   });
 };
 
@@ -213,7 +256,7 @@ ColorPicker.prototype.colorAt = function(x, y){
  */
 
 ColorPicker.prototype.hueAt = function(y){
-  var data = this.spectrum.getContext('2d').getImageData(0, y, 1, 1).data;
+  var data = this.gradientBuffer.getContext('2d').getImageData(0, Math.min( Math.max( 0, y ), this.spectrum.height - 1 ), 1, 1).data;
   return {
     r: data[0],
     g: data[1],
@@ -286,17 +329,7 @@ ColorPicker.prototype.renderSpectrum = function(options){
   canvas.height = h;
   autoscale(canvas);
 
-  var grad = ctx.createLinearGradient(0, 0, 0, h);
-  grad.addColorStop(0, rgb(255, 0, 0));
-  grad.addColorStop(.15, rgb(255, 0, 255));
-  grad.addColorStop(.33, rgb(0, 0, 255));
-  grad.addColorStop(.49, rgb(0, 255, 255));
-  grad.addColorStop(.67, rgb(0, 255, 0));
-  grad.addColorStop(.84, rgb(255, 255, 0));
-  grad.addColorStop(1, rgb(255, 0, 0));
-
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, w, h);
+  ctx.drawImage( this.gradientBuffer, 0, 0 );
 
   // pos
   if (!pos) return;
