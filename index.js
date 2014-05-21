@@ -193,6 +193,10 @@ ColorPicker.prototype.mainEvents = function(){
  */
 
 ColorPicker.prototype.colorAt = function(x, y){
+  if(window.devicePixelRatio) {
+    x = x * window.devicePixelRatio;
+    y = y * window.devicePixelRatio;
+  }
   var data = this.main.getContext('2d').getImageData(x, y, 1, 1).data;
   return {
     r: data[0],
@@ -213,6 +217,10 @@ ColorPicker.prototype.colorAt = function(x, y){
  */
 
 ColorPicker.prototype.hueAt = function(y){
+  if(window.devicePixelRatio) {
+    y = y * window.devicePixelRatio;
+  }
+
   var data = this.spectrum.getContext('2d').getImageData(0, y, 1, 1).data;
   return {
     r: data[0],
